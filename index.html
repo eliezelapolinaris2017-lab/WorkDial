@@ -1,102 +1,71 @@
 <!doctype html>
 <html lang="es">
 <head>
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>BizFlow • Starter (Landing + Instalador)</title>
-<style>
-  :root{--bg:#0b1221;--fg:#e5e7eb;--muted:#9ca3af;--card:#0f172a;--line:#1f2a44;--accent:#22d3ee;--ok:#34d399;}
-  *{box-sizing:border-box}
-  html,body{margin:0;background:var(--bg);color:var(--fg);font-family:ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,Inter,Arial}
-  .wrap{max-width:1000px;margin:0 auto;padding:28px}
-  h1{font-size:28px;margin:0 0 6px}
-  p.sub{color:var(--muted);margin:0 0 20px}
-  .card{background:linear-gradient(180deg,rgba(255,255,255,.06),rgba(255,255,255,.03));border:1px solid var(--line);border-radius:16px;padding:18px;margin:14px 0;box-shadow:0 6px 24px rgba(0,0,0,.3)}
-  .row{display:flex;gap:10px;flex-wrap:wrap}
-  .pill{font-size:12px;padding:2px 10px;border-radius:999px;background:rgba(34,211,238,.14);border:1px solid rgba(34,211,238,.4);color:#99f6e4}
-  .muted{color:var(--muted)}
-  pre,textarea{width:100%;background:#020617;color:#e2e8f0;border:1px solid var(--line);border-radius:12px;padding:12px;font-family:ui-monospace,Menlo,Consolas,monospace;font-size:13px}
-  textarea{min-height:340px;resize:vertical}
-  .btn{display:inline-flex;gap:8px;align-items:center;padding:10px 14px;border-radius:10px;border:1px solid var(--line);background:#0e162a;color:var(--fg);cursor:pointer;text-decoration:none}
-  .btn:hover{background:#0d1426}
-  .btn.acc{border-color:rgba(34,211,238,.5)}
-  .grid{display:grid;gap:12px}
-  @media(min-width:900px){.grid-2{grid-template-columns:1fr 1fr}}
-  .kbd{border:1px solid var(--line);padding:2px 6px;border-radius:6px;background:rgba(255,255,255,.06)}
-  .ok{color:var(--ok)}
-  .footer{font-size:12px;color:var(--muted);margin-top:18px}
-  .input{display:flex;gap:8px;align-items:center}
-  .input input{flex:1;min-width:220px;background:#0a1120;border:1px solid var(--line);color:var(--fg);padding:10px;border-radius:10px}
-  .note{font-size:12px;color:var(--muted);margin-top:6px}
-  .hr{height:1px;background:var(--line);margin:16px 0}
-</style>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>BizFlow Local — Ingresos/Gastos (localStorage)</title>
+  <link rel="stylesheet" href="styles.css" />
+  <!-- PWA opcional -->
+  <link rel="manifest" href="manifest.webmanifest">
+  <meta name="theme-color" content="#0b1221" />
 </head>
 <body>
-<div class="wrap">
-  <h1>BizFlow • Starter (Landing + Instalador)</h1>
-  <p class="sub">Un solo HTML para tu GitHub Pages que explica el proyecto y contiene el <strong>instalador</strong> (Bash) del monorepo: Next.js + Tailwind, Express + Prisma (PostgreSQL), Docker y GitHub Actions.</p>
-
-  <div class="card">
-    <div class="row">
-      <span class="pill">Frontend: Next.js (export estático)</span>
-      <span class="pill">Backend: Express + Prisma</span>
-      <span class="pill">DB: PostgreSQL</span>
-      <span class="pill">CI/CD: GitHub Actions</span>
-      <span class="pill">Pages: /bizflow</span>
+  <header class="topbar">
+    <h1>BizFlow <span class="muted">Local</span></h1>
+    <div class="kpis">
+      <div class="kpi"><div class="kpi-label">Ingresos</div><div id="kpi-income" class="kpi-value">0</div></div>
+      <div class="kpi"><div class="kpi-label">Gastos</div><div id="kpi-expense" class="kpi-value">0</div></div>
+      <div class="kpi"><div class="kpi-label">Balance</div><div id="kpi-balance" class="kpi-value">0</div></div>
     </div>
-    <p class="muted">Usuario detectado: <b>eliezelapolinaris2017-lab</b> • URL esperada: <code>https://eliezelapolinaris2017-lab.github.io/bizflow</code></p>
-  </div>
+  </header>
 
-  <div class="card grid grid-2">
-    <div>
-      <h3>Cómo usar (rápido)</h3>
-      <ol>
-        <li>Descarga este <span class="kbd">index.html</span> en tu repo <b>bizflow</b> o en <b>docs/</b> (si usas Pages desde <i>docs</i>).</li>
-        <li>Abre esta página, baja al <b>Instalador</b> y pulsa <b>Copiar script</b> o <b>Descargar</b>.</li>
-        <li>Ejecuta en tu terminal:
-<pre>chmod +x bootstrap_bizflow.sh
-./bootstrap_bizflow.sh</pre>
-        </li>
-        <li>Edita <code>.env</code>, corre <code>pnpm i</code>, <code>pnpm --filter apps/api prisma:generate</code> y <code>pnpm --filter apps/api prisma:migrate</code>.</li>
-        <li>Sube a GitHub y activa Pages (Actions). Tu web se publica en <span class="kbd">/bizflow</span>.</li>
-      </ol>
-    </div>
-    <div>
-      <h3>Configuración rápida</h3>
-      <div class="input">
-        <label for="ghuser">GitHub User:</label>
-        <input id="ghuser" value="eliezelapolinaris2017-lab" />
+  <main class="wrap">
+    <section class="card">
+      <h2>Agregar movimiento</h2>
+      <form id="tx-form" autocomplete="off">
+        <div class="row">
+          <select id="type">
+            <option value="INCOME">Ingreso</option>
+            <option value="EXPENSE">Gasto</option>
+          </select>
+          <input id="amount" type="number" step="0.01" min="0" placeholder="Monto" required />
+          <input id="note" type="text" placeholder="Nota (opcional)" />
+          <button type="submit">Guardar</button>
+        </div>
+      </form>
+      <div class="row row-tools">
+        <input id="q" type="search" placeholder="Buscar nota…" />
+        <button id="btn-export" class="outline">Exportar JSON</button>
+        <label class="import-btn outline">
+          Importar JSON
+          <input id="file-import" type="file" accept="application/json" hidden />
+        </label>
+        <button id="btn-clear" class="danger outline">Borrar todo</button>
       </div>
-      <div class="input" style="margin-top:8px">
-        <label for="reponame">Repo:</label>
-        <input id="reponame" value="bizflow" />
-      </div>
-      <p class="note">Estos valores se inyectarán en el script cuando pulses <b>Copiar</b> o <b>Descargar</b>.</p>
-      <div class="hr"></div>
-      <div class="row">
-        <button class="btn acc" id="copyBtn">📋 Copiar script</button>
-        <button class="btn" id="dlBtn">⬇️ Descargar script</button>
-      </div>
-      <p class="note">Requiere <span class="kbd">node</span>, <span class="kbd">pnpm</span> (via <span class="kbd">corepack</span>) y opcionalmente <span class="kbd">gh</span> para crear el repo remoto.</p>
-    </div>
-  </div>
+    </section>
 
-  <div class="card">
-    <h3>Instalador (bootstrap_bizflow.sh)</h3>
-    <textarea id="scriptBox" spellcheck="false">#!/usr/bin/env bash
-set -euo pipefail
+    <section class="card">
+      <h2>Movimientos</h2>
+      <table class="table">
+        <thead>
+          <tr><th>Fecha</th><th>Tipo</th><th class="right">Monto</th><th>Nota</th><th></th></tr>
+        </thead>
+        <tbody id="tx-body"></tbody>
+      </table>
+      <div id="empty" class="empty">Sin datos aún. Agrega un movimiento arriba 👆</div>
+    </section>
+  </main>
 
-# ================================
-# BizFlow: Bootstrap monorepo + CI/CD + Docker + Next + Express + Prisma
-# ================================
+  <footer class="footer">
+    <small>Datos guardados en tu navegador con <code>localStorage</code>. No hay servidor.</small>
+  </footer>
 
-# --- Configuración editable (se reemplaza desde la página) ---
-GITHUB_USER="__USER__"          # tu usuario de GitHub
-REPO_NAME="__REPO__"            # nombre del repo
-CREATE_REMOTE="false"           # "true" para crear repo con gh cli
-PUBLISH_PAGES="true"            # configurar workflow de Pages
-INIT_GIT="true"                 # inicializar git
-DEFAULT_BRANCH="main"
-
-# --- Requisitos mínimos ---
-command -v node >/dev/null || {
+  <script src="app.js"></script>
+  <script>
+    // Registrar SW (PWA) opcional
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('./sw.js').catch(()=>{});
+    }
+  </script>
+</body>
+</html>
